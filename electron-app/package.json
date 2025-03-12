@@ -1,0 +1,23 @@
+{
+  "name": "vr-mouse-streaming-electron",
+  "version": "1.0.0",
+  "description": "Aplicativo Electron para captura de tela e transmissão",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": ["vr", "streaming", "electron"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "qrcode": "^1.5.3",
+    "simple-peer": "^9.11.1",
+    "socket.io-client": "^4.7.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "electron": "^26.2.1",
+    "electron-builder": "^24.6.4"
+  }
+}
