@@ -9,7 +9,6 @@ let selectedSource = null;
 let localStream = null;
 let roomId = null;
 
-// Elementos da UI
 const startBtn = document.getElementById('start-btn');
 const stopBtn = document.getElementById('stop-btn');
 const sourceList = document.getElementById('source-list');
@@ -18,7 +17,6 @@ const roomIdElement = document.getElementById('room-id');
 const qrcodeElement = document.getElementById('qrcode');
 const statusElement = document.getElementById('status');
 
-// Carregar fontes de captura disponíveis
 async function loadSources() {
   const sources = await ipcRenderer.invoke('get-sources');
   sourceList.innerHTML = '';
@@ -85,7 +83,6 @@ async function startStreaming() {
     console.log('Stream local obtido:', localStream);
     console.log('Tracks de vídeo:', localStream.getVideoTracks());
     
-    // Opcional: Crie um elemento de vídeo local para testar
     const localVideo = document.createElement('video');
     localVideo.srcObject = localStream;
     localVideo.autoplay = true;
@@ -101,7 +98,6 @@ async function startStreaming() {
     console.log(`Conectando ao servidor de sinalização em http://${getLocalIP()}:3001`);
     
     socket.on('connect', async () => {
-      // Gerar ID único para a sala
       roomId = await ipcRenderer.invoke('generate-room-id');
       socket.emit('create-room', roomId);
     });
@@ -112,16 +108,14 @@ async function startStreaming() {
       
       // Gerar QR Code com URL para o cliente móvel
       const localIP = getLocalIP();
-      console.log("IP local detectado:", localIP); // Para debug
+      console.log("IP local detectado:", localIP); // debuggggg
       const clientUrl = `http://${localIP}:3000/viewer?room=${roomId}`;
       console.log("URL para cliente:", clientUrl);
       
-      // Tente usar toCanvas primeiro, se falhar, use toDataURL
       try {
         QRCode.toCanvas(qrcodeElement, clientUrl, { width: 200 }, (error) => {
           if (error) {
             console.error('Erro ao gerar QR Code com toCanvas:', error);
-            // Fallback para toDataURL
             QRCode.toDataURL(clientUrl, { width: 200 }, (err, url) => {
               if (err) {
                 console.error('Erro ao gerar QR Code com toDataURL:', err);
@@ -151,7 +145,6 @@ async function startStreaming() {
       statusElement.textContent = 'Cliente conectado!';
       statusElement.className = 'status connected';
       
-      // Iniciar conexão peer-to-peer com o cliente
       const peer = new SimplePeer({
         initiator: true,
         stream: localStream,
@@ -208,18 +201,15 @@ async function startStreaming() {
   }
 }
 
-// Parar transmissão
 function stopStreaming() {
   if (localStream) {
     localStream.getTracks().forEach(track => track.stop());
     localStream = null;
   }
   
-  // Destruir todas as conexões peer
   Object.values(peers).forEach(peer => peer.destroy());
   peers = {};
   
-  // Desconectar do servidor
   if (socket) {
     socket.disconnect();
     socket = null;
@@ -232,9 +222,7 @@ function stopStreaming() {
   statusElement.className = 'status disconnected';
 }
 
-// Eventos
 startBtn.addEventListener('click', startStreaming);
 stopBtn.addEventListener('click', stopStreaming);
 
-// Carregar fontes ao iniciar
 loadSources();
